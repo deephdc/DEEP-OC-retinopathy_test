@@ -9,11 +9,19 @@ pipeline {
 
     environment {
         dockerhub_repo = "deephdc/deep-oc-retinopathy_test"
-        tf_ver = "1.10.1"
-        py_ver = "py3"
+
+        base_cpu_tag = "1.10.0-py3"
+        base_gpu_tag = "1.10.0-gpu-py3"
     }
 
     stages {
+        stage('Validate metadata') {
+            steps {
+                checkout scm
+                sh 'deep-app-schema-validator metadata.json'
+            }
+        }
+
         stage('Docker image building') {
             when {
                 anyOf {
@@ -25,57 +33,53 @@ pipeline {
             steps{
                 checkout scm
                 script {
+
+                    // build different tags
                     id = "${env.dockerhub_repo}"
-                    
+
                     if (env.BRANCH_NAME == 'master') {
-                        // CPU
-                        id_cpu = DockerBuild(
-                            id,
-                            tag: ['latest', 'cpu'],
-                            build_args: [
-                                "tag=${env.tf_ver}",
-                                "pyVer=${env.py_ver}",
-                                "branch=master"
-                            ]
-                        )
-                        // GPU
-                        id_gpu = DockerBuild(
-                            id,
-                            tag: ['gpu'],
-                            build_args: [
-                                "tag=${env.tf_ver}-gpu",
-                                "pyVer=${env.py_ver}",
-                                "branch=master"
-                            ]                            
-                        )
+                       // CPU + python3 (aka default)
+                       id_cpu = DockerBuild(id,
+                                            tag: ['latest', 'cpu'], 
+                                            build_args: ["tag=${env.base_cpu_tag}",
+                                                         "pyVer=python3",
+                                                         "branch=master"])
+
+                       // GPU + python3
+                       id_gpu = DockerBuild(id,
+                                            tag: ['gpu'], 
+                                            build_args: ["tag=${env.base_gpu_tag}",
+                                                         "pyVer=python3",
+                                                         "branch=master"])
                     }
+
                     if (env.BRANCH_NAME == 'test') {
-                        // CPU
-                        id_cpu = DockerBuild(
-                            id,
-                            tag: ['test', 'cpu-test'],
-                            build_args: [
-                                "tag=${env.tf_ver}",
-                                "pyVer=${env.py_ver}",
-                                "branch=test"
-                            ]
-                        )
-                        // GPU
-                        id_gpu = DockerBuild(
-                            id,
-                            tag: ['gpu-test'],
-                            build_args: [
-                                "tag=${env.tf_ver}-gpu",
-                                "pyVer=${env.py_ver}",
-                                "branch=test"
-                            ]                            
-                        )
+                       // CPU + python3 (aka default)
+                       id_cpu = DockerBuild(id,
+                                            tag: ['test', 'cpu-test'], 
+                                            build_args: ["tag=${env.base_cpu_tag}",
+                                                         "pyVer=python3",
+                                                         "branch=test"])
+
+                       // GPU + python3
+                       id_gpu = DockerBuild(id,
+                                            tag: ['gpu-test'], 
+                                            build_args: ["tag=${env.base_gpu_tag}",
+                                                         "pyVer=python3",
+                                                         "branch=test"])
                     }
+
+                }
+            }
+            post {
+                failure {
+                    DockerClean()
                 }
             }
         }
-        
-          
+
+
+
         stage('Docker Hub delivery') {
             when {
                 anyOf {
@@ -84,7 +88,8 @@ pipeline {
                     buildingTag()
                 }
             }
-            steps {
+            steps{
+
                 script {
                     DockerPush(id_cpu)
                     DockerPush(id_gpu)
