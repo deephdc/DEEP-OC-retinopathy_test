@@ -105,7 +105,7 @@ RUN ulimit -s 32768
 # clone only the last commit from github
 # RUN git clone --depth 1 -b $branch https://github.com/vykozlov/retinopathy_test && \
 
-RUN git clone --depth 1 -b $branch https://github.com/itokeiic/retinopathy_test && \
+RUN git clone --depth 1 -b $branch https://github.com/deephdc/retinopathy_test && \
     cd  retinopathy_test && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
