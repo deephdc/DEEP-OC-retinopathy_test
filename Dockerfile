@@ -4,7 +4,7 @@
 # pyVer - python versions as 'python' or 'python3'
 # branch - user repository branch to clone (default: master, other option: test)
 
-ARG tag=1.14.0-py3
+ARG tag=1.14.0-gpu-py3
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0-py3
 FROM tensorflow/tensorflow:${tag}
