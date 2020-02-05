@@ -4,7 +4,7 @@
 # pyVer - python versions as 'python' or 'python3'
 # branch - user repository branch to clone (default: master, other option: test)
 
-ARG tag=1.10.0-py3
+ARG tag=1.10.0-gpu-py3
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0-py3
 FROM tensorflow/tensorflow:${tag}
@@ -21,7 +21,7 @@ ARG pyVer=python3
 ARG branch=master
 
 # If to install JupyterLab
-ARG jlab=false
+ARG jlab=true
 
 # Install ubuntu updates and python related stuff
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
