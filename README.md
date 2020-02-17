@@ -21,5 +21,3 @@ Quick instructions.
 
 Note: the docker container needs NVIDIA GPU enabled machine.
 
-Note: the docker container needs NVIDIA GPU enabled machine.
-
