@@ -19,7 +19,5 @@ Quick instructions.
 
     docker run -ti -p 5000:5000 deephdc/deep-oc-retinopathy_test
 
-Note: the docker container needs NVIDIA GPU enabled machine.
-
-Note: the docker container needs NVIDIA GPU enabled machine.
+Note: the GPU version of the docker container needs NVIDIA GPU enabled machine.
 
