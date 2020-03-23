@@ -20,7 +20,7 @@ ARG pyVer=python3
 ARG branch=test
 
 # If to install JupyterLab
-ARG jlab=false
+ARG jlab=true
 
 # Install ubuntu updates and python related stuff
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -86,9 +86,6 @@ ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
 RUN if [ "$jlab" = true ]; then \
-       apt update && \
-       apt install -y nodejs npm && \
-       apt-get clean && \
        pip install --no-cache-dir jupyterlab ; \
        git clone https://github.com/deephdc/deep-jupyter /srv/.jupyter ; \
     else echo "[INFO] Skip JupyterLab installation!"; fi
