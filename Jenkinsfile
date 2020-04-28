@@ -10,7 +10,7 @@ pipeline {
     environment {
         dockerhub_repo = "deephdc/deep-oc-retinopathy_test"
         base_cpu_tag = "1.12.0-py3"
-        base_gpu_tag = "1.12.0-gpu-py3"
+        base_gpu_tag = "1.12.0-gpu-py36"
     }
 
     stages {
