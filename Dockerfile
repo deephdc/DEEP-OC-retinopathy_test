@@ -1,3 +1,4 @@
+
 # Dockerfile may have following Arguments: tag, pyVer, branch
 # tag - tag for the Base image, (e.g. 1.10.0-py3 for tensorflow)
 # pyVer - python versions as 'python' or 'python3'
@@ -6,17 +7,19 @@
 ARG tag=1.12.0-py36
 
 # Base image, e.g. tensorflow/tensorflow:1.12.0-py3
+
 FROM deephdc/tensorflow:${tag}
 
 LABEL maintainer='HMGU'
 LABEL version='0.1.0'
 # Retinopathy classification using Tensorflow
 
+
 # it is python3 code
 ARG pyVer=python3
 
 # What user branch to clone (!)
-ARG branch=master
+ARG branch=test
 
 # If to install JupyterLab
 ARG jlab=true
@@ -33,6 +36,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
          libsm6 \
          libxext6 \
          libxrender1 \
+         gcc python3-dev \
          $pyVer-setuptools \
          $pyVer-pip \
          $pyVer-dev \
@@ -51,6 +55,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     fi && \
     python --version && \
     pip install --upgrade pip && \
+    pip install werkzeug==0.15.1 && \
     pip --version
 
 # install rclone
@@ -100,12 +105,18 @@ RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
 ENV JUPYTER_CONFIG_DIR /srv/.deep-start/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
+# RUN if [ "$jlab" = true ]; then \
+#        pip install --no-cache-dir jupyterlab ; \
+#        git clone https://github.com/deephdc/deep-jupyter /srv/.jupyter ; \       
+#     else echo "[INFO] Skip JupyterLab installation!"; fi
+
+# not installing dee-jupyter because it is in deep-start
 RUN if [ "$jlab" = true ]; then \
        pip install --no-cache-dir jupyterlab ; \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
-# Expand memory usage limit
-RUN ulimit -s 32768
+# # Expand memory usage limit
+# RUN ulimit -s 32768
 
 # Install user app:
 # clone only the last commit from github
@@ -119,8 +130,10 @@ RUN git clone --depth 1 -b $branch https://github.com/deephdc/retinopathy_test &
 # Open DEEPaaS port
 EXPOSE 5000
 
+
 # Open Monitoring  and Jupyter ports
 EXPOSE 6006 8888
 
 # Account for OpenWisk functionality (deepaas >=0.5.0)
 CMD ["deepaas-run", "--openwhisk-detect", "--listen-ip", "0.0.0.0", "--listen-port", "5000"]
+
