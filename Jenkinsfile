@@ -11,6 +11,7 @@ pipeline {
         dockerhub_repo = "deephdc/deep-oc-retinopathy_test"
         base_cpu_tag = "1.12.0-py36"
         base_gpu_tag = "1.12.0-gpu-py36"
+        oneclient_ver = "19.02.0.rc2-1~bionic"
     }
 
     stages {
@@ -32,7 +33,6 @@ pipeline {
             steps{
                 checkout scm
                 script {
-
                     // build different tags
                     id = "${env.dockerhub_repo}"
 
@@ -41,6 +41,7 @@ pipeline {
                        id_cpu = DockerBuild(id,
                                             tag: ['latest', 'cpu'], 
                                             build_args: ["tag=${env.base_cpu_tag}",
+                                                         "oneclient_ver=${env.oneclient_ver}",
                                                          "pyVer=python3",
                                                          "branch=master"])
 
@@ -48,6 +49,7 @@ pipeline {
                        id_gpu = DockerBuild(id,
                                             tag: ['gpu'], 
                                             build_args: ["tag=${env.base_gpu_tag}",
+                                                         "oneclient_ver=${env.oneclient_ver}",
                                                          "pyVer=python3",
                                                          "branch=master"])
                     }
@@ -57,6 +59,7 @@ pipeline {
                        id_cpu = DockerBuild(id,
                                             tag: ['test', 'cpu-test'], 
                                             build_args: ["tag=${env.base_cpu_tag}",
+                                                         "oneclient_ver=${env.oneclient_ver}",
                                                          "pyVer=python3",
                                                          "branch=test"])
 
@@ -64,6 +67,7 @@ pipeline {
                        id_gpu = DockerBuild(id,
                                             tag: ['gpu-test'], 
                                             build_args: ["tag=${env.base_gpu_tag}",
+                                                         "oneclient_ver=${env.oneclient_ver}",
                                                          "pyVer=python3",
                                                          "branch=test"])
                     }
@@ -78,7 +82,6 @@ pipeline {
         }
 
 
-
         stage('Docker Hub delivery') {
             when {
                 anyOf {
@@ -88,7 +91,6 @@ pipeline {
                 }
             }
             steps{
-
                 script {
                     DockerPush(id_cpu)
                     DockerPush(id_gpu)
