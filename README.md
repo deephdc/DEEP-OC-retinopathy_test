@@ -1,7 +1,6 @@
 DEEP-OC-retinopathy_test
 ============================================
 
-
 <div align="center">
 <img src="https://marketplace.deep-hybrid-datacloud.eu/images/logo-deep.png" alt="logo" width="300"/>
 </div>
@@ -19,5 +18,5 @@ Quick instructions.
 
     docker run -ti -p 5000:5000 deephdc/deep-oc-retinopathy_test
 
-Note: the GPU version of the docker container needs NVIDIA GPU enabled machine.
+Note: for faster training, the docker container needs NVIDIA GPU enabled machine.
 
