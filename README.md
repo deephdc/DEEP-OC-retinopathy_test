@@ -1,3 +1,8 @@
+---
+# The Repository is ARCHIVED!
+### it is moved to https://github.com/ai4os-hub/retinopathy-test
+---
+
 DEEP-OC-retinopathy_test
 ============================================
 
